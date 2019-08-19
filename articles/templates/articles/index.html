@@ -6,7 +6,8 @@
     {% for article in articles %}
     <li>
       {{ article.title }} 
-      {{ article.created_at}}  
+      <p>{{ article.content }}</p>
+      {{ article.created_at}}  <hr>
     </li>
     {% endfor %}
   </ul>

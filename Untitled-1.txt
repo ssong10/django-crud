@@ -1,0 +1,19 @@
+가상환경 생성/실행
+.gitignore
+git init
+django 설치
+requirements.txt 설정
+    > 추후에 pip install -r requirements.txt 설치
+======================
+django-admin startproject
+
+
+app 만들고 등록
+    - python manage.y startapp articles
+        > settings.py 에서 앱추가
+model 정의
+    - models.py (스키마)
+    - makemigrations (마이그레이션 파일 생성)
+        > python manage.py makemigrations
+    - migrate (db 반영)
+        > python manage.py migrate

@@ -22,3 +22,12 @@ class Article(models.Model):
 # # makemigrations : migration 파일 생성
 #           : DB 설계도 작성
 # migrate : migration 파일 DB 반영
+
+class Student(models.Model):
+    name = models.CharField(max_length=10)
+    email = models.CharField(max_length=20)
+    birthday = models.DateField()
+    age = models.IntegerField()
+
+    def __str__(self):
+        return f'<{self.name}>'

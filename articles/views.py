@@ -19,7 +19,6 @@ def create(request):
     # article = Article.objects.create(title=title, content=content)
     article = Article(title=title, content=content)
     article.save()
-
     context = {
         'article': article
     }

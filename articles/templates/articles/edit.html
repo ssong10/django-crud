@@ -19,14 +19,21 @@ edit_content {
 
 
 {% block body %}
-  <div class="edit_content">
-    <div class="edit_title"> 글 수정하기 </div>
-    <form action="/articles/{{ article.pk }}/update/">   
-      <label for="title"> 제목 : </label>
-      <input id = 'title' name = 'title' type="text" value="{{ article.title }}"><br>
-      <label for="content"> 내용 : </label>
-      <textarea name="content" id="content" cols="50" rows="30"  >{{ article.content }}</textarea>
-      <input type="submit" value="수정하기">
-    </form>
-  </div>
+
+<div class="edit_content">
+  <form action="/articles/{{ article.pk }}/update/" method='GET'>
+    <div class="form-group">
+      <label for="formGroupExampleInput"> 제목</label>
+      <input type="text" class="form-control" id="formGroupExampleInput" name="title" value="{{ article.title }}">
+      <small id="emailHelp" class="form-text text-muted">글의 제목을 수정 해주세요.</small>
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">내용</label>
+      <textarea name="content" class="form-control" id="exampleFormControlTextarea1" rows="3">{{ article.content }}</textarea>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary">글 수정</button>
+    </div>
+  </form>
+</div>
 {% endblock %}

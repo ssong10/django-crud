@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from .models import Article
-import requests
 
 # Create your views here.
 def index(request):
@@ -25,4 +24,11 @@ def create(request):
         'article': article
     }
     # return render(request,'articles/create.html',context)
-    return redirect('/articles/')
+    return redirect(f'/articles/{article.pk}')
+
+def detail(request,article_pk):
+    article = Article.objects.get(pk=article_pk)
+    context = {
+        'article':article
+    }
+    return render(request,'articles/detail.html',context)

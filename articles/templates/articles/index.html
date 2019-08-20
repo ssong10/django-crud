@@ -7,7 +7,9 @@
     <li>
       {{ article.title }} 
       <p>{{ article.content }}</p>
-      {{ article.created_at}}  <hr>
+      {{ article.created_at}}
+      <a href="/articles/{{ article.pk }}">글 보러가기</a>  
+    <hr>
     </li>
     {% endfor %}
   </ul>

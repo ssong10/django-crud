@@ -1,16 +1,42 @@
 {% extends 'articles/base.html' %}
+
+{% block css %}
+.board_table {
+  display:flex;
+  width : 100wh;
+}
+
+.board_table > tbody {
+  margin:10px;
+}
+
+.table_content {
+ 
+}
+
+{% endblock %}
+
 {% block body %}
-  <h1>게시판</h1>
-  <a href="/articles/new/">글 작성하기</a>
-  <ul>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">제목</th>
+      <th scope="col">작성일자</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for article in articles %}
-    <li>
-      {{ article.title }} 
-      <p>{{ article.content }}</p>
-      {{ article.created_at}}
-      <a href="/articles/{{ article.pk }}">글 보러가기</a>  
-    <hr>
-    </li>
+    <tr>
+      <th scope="row">{{ article.id }}</th>
+      <td>
+        <a href="/articles/{{article.id}}">
+          {{ article.title }}</td>
+        </a>
+      <td>{{ article.created_at}}</td>
+    </tr>
     {% endfor %}
-  </ul>
+  </tbody>
+
+</table>
 {% endblock %}

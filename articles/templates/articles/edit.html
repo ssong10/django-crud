@@ -21,7 +21,7 @@ edit_content {
 {% block body %}
 
 <div class="edit_content">
-  <form action="/articles/{{ article.pk }}/update/" method='GET'>
+  <form action="{% url 'articles:update' article.pk %}" method='GET'>
     <div class="form-group">
       <label for="formGroupExampleInput"> 제목</label>
       <input type="text" class="form-control" id="formGroupExampleInput" name="title" value="{{ article.title }}">

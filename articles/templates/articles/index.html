@@ -18,11 +18,10 @@
   width:50px;
   height:50px;
   margin:0 auto;
-  background-color:blue;
-  color:red;
   text-align:center;
   line-height:50px;
 }
+
 {% endblock %}
 
 {% block body %}
@@ -30,7 +29,7 @@
   <div>
     알고리즘 게시판
   </div>
-  <a href="/articles/new/">
+  <a href=" {% url 'articles:new' %}">
     <div class="go_new">작성
     </div>
   </a>
@@ -48,7 +47,7 @@
     <tr>
       <th scope="row">{{ article.id }}</th>
       <td>
-        <a href="/articles/{{article.id}}">
+        <a href="{% url 'articles:detail' article.pk %}">
           {{ article.title }}</td>
         </a>
       <td>{{ article.created_at}}</td>

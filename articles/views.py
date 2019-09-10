@@ -14,8 +14,8 @@ def new(request):
     return render(request,'articles/new.html')
 
 def create(request):
-    title = request.GET.get('title')
-    content = request.GET.get('content')
+    title = request.POST.get('title')
+    content = request.POST.get('content')
     # article = Article.objects.create(title=title, content=content)
     article = Article(title=title, content=content)
     article.save()
@@ -23,7 +23,7 @@ def create(request):
         'article': article
     }
     # return render(request,'articles/create.html',context)
-    return redirect('articles:detail', article_pk)
+    return redirect('articles:detail', article.pk)
 
 def detail(request,article_pk):
     article = Article.objects.get(pk=article_pk)
@@ -45,8 +45,8 @@ def edit(request,article_pk):
     return render(request,'articles/edit.html',context)
 
 def update(request,article_pk):
-    title = request.GET.get('title')
-    content = request.GET.get('content')
+    title = request.POST.get('title')
+    content = request.POST.get('content')
     article = Article.objects.get(pk=article_pk)
     article.title = title
     article.content = content

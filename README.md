@@ -10,6 +10,27 @@
 
   * python 3.7.4
 
+  ```bash
+  $ python -V
+  python 3.7.4
+  $ python -m venv venv
+  ```
+
+  * 가상환경 실행
+
+  ```bash
+  $ source venv/Scripts/activate
+  (venv)
+  ```
+
+  * 가상환경 종료
+
+  ```bash
+  (venv) $ deactivate
+  ```
+
+  
+
 * pip - `requirements.txt` 확인
 
   * 현재 패키지 리스트 작성

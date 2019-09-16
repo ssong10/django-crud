@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from IPython import embed
-from .models import Article
+from .models import Article, Comment
 from django.views.decorators.http import require_POST
 
 
@@ -33,8 +33,10 @@ def create(request):
 
 def detail(request,article_pk):
     article = Article.objects.get(pk=article_pk)
+    comments = article.comment_set.all()
     context = {
-        'article':article
+        'article':article,
+        'comments' : comments
     }
     return render(request,'articles/detail.html',context)
 
@@ -68,3 +70,8 @@ def update(request,article_pk):
             'article':article
         }
         return render(request,'articles/edit.html',context)
+
+def comment_create(request,article_pk):
+    content = request.POST.get('content')
+    comment = Comment.objects.create(content=content,article_id=article_pk)
+    return redirect('articles:detail', article_pk)

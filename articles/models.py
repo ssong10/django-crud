@@ -20,7 +20,7 @@ class Article(models.Model):
         return f'{self.id} - {self.title}'
 # models.py : python 클래스 정의
 #           : 모델 설계도
-# # makemigrations : migration 파일 생성
+# makemigrations : migration 파일 생성
 #           : DB 설계도 작성
 # migrate : migration 파일 DB 반영
 

@@ -1,13 +1,20 @@
 {% extends 'articles/base.html' %}
+
+{% load bootstrap4 %}
+
 {% block body %}
 {% if request.resolver_match.url_name == 'create' %}
   <h1>글 작성하기</h1>
 {% else %}
   <h1>글 수정하기</h1>
 {% endif %}
-<form action="" method="POST">
+
+<form action="" method="post" class="form">
   {% csrf_token %}
-  {{ article_form.as_p }}
-  <button type="submit" class="but btn-primary">글 작성</button>
-</form>  
+  {% bootstrap_form article_form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">글작성</button>
+  {% endbuttons %}
+</form>
+
 {% endblock %}

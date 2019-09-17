@@ -1,44 +1,61 @@
 {% extends 'articles/base.html' %}
 {% block body %}
-  <h1> {{article.id}}번글 </h1>
-  <h1> {{ article.title }} </h1>
-  <h2> {{ article.content}} </h2> 
-  <h3> {{ article.created_at}} </h3>
-  <a href="{% url 'articles:index' %}">목록으로</a>
-  <form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
-    {% csrf_token %}
-    <input type="submit" value="삭제">
-  </form>
-  <a href="{% url 'articles:update' article.pk %}">[수정]</a>
-  <hr>
-  <h4>댓글 수: {{comments.count}} </h4>
-  <table class="table">
+{% if messages %}
+<div class="alert alert-primary" role="alert">
+  {% for message in messages %}
+    {{ message }}
+  {% endfor %}
+</div>
+{% endif %}
+
+<h1> {{article.id}}번글 </h1>
+<h1> {{ article.title }} </h1>
+<h2> {{ article.content}} </h2>
+<h3> {{ article.created_at}} </h3>
+<a href="{% url 'articles:index' %}">목록으로</a>
+<form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
+  {% csrf_token %}
+  <input type="submit" value="삭제">
+</form>
+<a href="{% url 'articles:update' article.pk %}">[수정]</a>
+<hr>
+<h4>댓글 수: {{comments.count}} </h4>
+<table class="table">
   <thead>
     <tr>
       <th scope="col">번호</th>
       <th scope="col">댓글</th>
       <th scope="col">작성시간</th>
+      <th scope="col">삭제</th>
+
     </tr>
   </thead>
   <tbody>
-      {% for comment in comments %}
-      <tr>
-        <td>
-          {{ comment.id }}
-        </td>  
-        <td>
-          {{ comment.content }}
-        </td>    
-        <td>
-          {{ comment.created_at }}
-        </td>    
-      </tr>
-      {% empty %}
-        <tr>
-          <td>댓글이 없어요 작성해주세요
-          </td>
-        </tr>
-      {% endfor %}
+    {% for comment in comments %}
+    <tr>
+      <td>
+        {{ comment.id }}
+      </td>
+      <td>
+        {{ comment.content }}
+      </td>
+      <td>
+        {{ comment.created_at }}
+      </td>
+      <td>
+        <form action="{% url 'articles:comment_delete' article.pk comment.id %}" method="POST"
+          onclick="return confirm('진짜 지울래?')">
+          {% csrf_token %}
+          <input type="submit" value="삭제">
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td>댓글이 없어요 작성해주세요
+      </td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
 <h4>댓글작성</h4>

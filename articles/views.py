@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from IPython import embed
 from .models import Article, Comment
 from django.views.decorators.http import require_POST
@@ -44,7 +44,8 @@ def create(request):
     return render(request, 'articles/form.html', context)
 
 def detail(request,article_pk):
-    article = Article.objects.get(pk=article_pk)
+    # article = Article.objects.get(pk=article_pk)
+    article = get_object_or_404(Article, pk=article_pk)
     comments = article.comment_set.all()
     context = {
         'article':article,

@@ -1,0 +1,24 @@
+.title {
+  color:royalblue;
+}
+
+.board_table {
+  display:flex;
+  width : 100wh;
+}
+
+.board_table > tbody {
+  margin:10px;
+}
+
+.table_content {
+ 
+}
+.go_new {
+  display:flex;
+  width:50px;
+  height:50px;
+  margin:0 auto;
+  text-align:center;
+  line-height:50px;
+}

@@ -1,4 +1,6 @@
 {% extends 'articles/base.html' %}
+{% load bootstrap4 %}
+
 {% block body %}
 {% if messages %}
 <div class="alert alert-primary" role="alert">
@@ -59,9 +61,11 @@
   </tbody>
 </table>
 <h4>댓글작성</h4>
-<form action="/articles/{{article.pk}}/comment_create/" method="POST">
+<form action="{% url 'articles:comment_create' article.pk %}" method="POST" class="form">
   {% csrf_token %}
-  <input type="text" name='content'>
-  <input type="submit" value="작성~!">
+  {% bootstrap_form comment_form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">댓글</button>
+  {% endbuttons %}
 </form>
 {% endblock %}

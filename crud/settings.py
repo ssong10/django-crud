@@ -129,3 +129,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'crud','assets')
 ]
+
+# MEDIA_ROOT : 실제 미디어 파일이 저장되는 경로
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL : 업로드된 image의 URL
+MEDIA_URL = '/media/'

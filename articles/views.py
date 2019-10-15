@@ -9,7 +9,6 @@ from IPython import embed
 # Create your views here.
 def index(request):
     articles = Article.objects.order_by('-id')
-    embed()
     context = {
         'articles' : articles
     }

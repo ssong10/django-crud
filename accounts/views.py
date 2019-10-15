@@ -2,9 +2,12 @@ from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from IPython import embed
 
 # Create your views here.
 def signup(request):
+    if request.user.is_authenticated:
+        return redirect('articles:index')
     if request.method =="POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -19,15 +22,15 @@ def signup(request):
 
 def login(request):
     if request.method =='POST':
-        form = AuthenticationForm(request,request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        login_form = AuthenticationForm(request,request.POST)
+        if login_form.is_valid():
+            user = login_form.get_user()
             auth_login(request, user)
-            return redirect('articles:index')
+            return redirect(request.GET.get('next') or 'articles:index')
     else:
-        form = AuthenticationForm()
+        login_form = AuthenticationForm()
     context = {
-        'form' : form
+        'login_form' : login_form
     }
     return render(request,'accounts/login.html',context)
 

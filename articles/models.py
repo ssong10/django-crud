@@ -1,6 +1,7 @@
 from django.db import models
 from imagekit.models import ProcessedImageField,ImageSpecField
 from imagekit.processors import ResizeToFill
+
 # Create your models here.
 # 1. 모델(스키마) 정의
 # 데이터베이스 테이블을 정의하고,

@@ -1,7 +1,10 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm,PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserChangeForm
 from IPython import embed
 
 # Create your views here.
@@ -18,7 +21,7 @@ def signup(request):
     context = {
         'form': form
     }
-    return render(request,'accounts/signup.html',context)
+    return render(request,'accounts/form.html',context)
 
 def login(request):
     if request.method =='POST':
@@ -37,3 +40,32 @@ def login(request):
 def logout(request):
     auth_logout(request)
     return redirect('articles:index')
+
+@login_required
+def update(request):
+    if request.method =="POST":
+        form = CustomUserChangeForm(request.POST,instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('articles:index')
+    else:
+        form = CustomUserChangeForm(instance=request.user)
+    context = {
+        'form': form
+    }
+    return render(request,'accounts/form.html',context)
+    
+@login_required
+def password_change(request):
+    if request.method =="POST":
+        form = PasswordChangeForm(request.user,request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return redirect('articles:index')
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {
+        'form' : form
+    }
+    return render(request,'accounts/form.html',context)

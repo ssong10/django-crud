@@ -135,3 +135,5 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # MEDIA_URL : 업로드된 image의 URL
 MEDIA_URL = '/media/'
+
+LOGIN_URL = '/accounts/login'  # default ! @login_required

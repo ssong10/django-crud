@@ -4,7 +4,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .forms import CustomUserChangeForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 from IPython import embed
 
 # Create your views here.
@@ -12,12 +12,12 @@ def signup(request):
     if request.user.is_authenticated:
         return redirect('articles:index')
     if request.method =="POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('articles:index')
     else: 
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     context = {
         'form': form
     }
@@ -54,7 +54,7 @@ def update(request):
         'form': form
     }
     return render(request,'accounts/form.html',context)
-    
+
 @login_required
 def password_change(request):
     if request.method =="POST":

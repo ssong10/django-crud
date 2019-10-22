@@ -3,10 +3,12 @@ from IPython import embed
 from .models import Article, Comment
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-
+# from accounts.models import User
+from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .forms import ArticleForm, CommentForm
 from IPython import embed
+from django.http import HttpResponseForbidden
 
 # Create your views here.
 def index(request):
@@ -18,6 +20,7 @@ def index(request):
 
 # def new(request):
 #     return render(request,'articles/new.html')
+
 
 @login_required
 def create(request):
@@ -31,7 +34,9 @@ def create(request):
                 # title = article_form.cleaned_data.get('title')
                 # content = article_form.cleaned_data.get('content')
                 # article = Article(title=title, content=content)
-                article = article_form.save()
+                article = article_form.save(commit=False)
+                article.user = request.user
+                article.save()
                 # redirect
                 return redirect('articles:detail', article.pk)
             # else :
@@ -64,10 +69,17 @@ def detail(request,article_pk):
 
 @require_POST
 def delete(request,article_pk):
+
     article = Article.objects.get(pk=article_pk)
+    if article.user == request.user:
     # if request.method == 'POST':
-    article.delete()
-    return redirect('articles:index')
+        article.delete()
+        messages.success(request, '글이 삭제되었습니다.')
+        return redirect('articles:index')
+    else:
+        messages.warning(request, '글을 삭제할수 없습니다.')
+        raise HttpResponseForbidden
+
     # else:
     #     return redirect('articles:detail',article.pk)
 
@@ -81,18 +93,22 @@ def delete(request,article_pk):
 
 def update(request,article_pk):
     article = Article.objects.get(pk=article_pk)
-    if request.method =='POST':
-        article_form = ArticleForm(request.POST, instance=article)
-        if article_form.is_valid():
-            article = article_form.save()
-            return redirect('articles:detail',article_pk)
+    if article.user == request.user:
+        if request.method =='POST':
+            article_form = ArticleForm(request.POST, instance=article)
+            if article_form.is_valid():
+                article = article_form.save()
+                return redirect('articles:detail',article_pk)
+        else:
+            article_form = ArticleForm(instance=article)
+        context = {
+            'article_form' : article_form
+        }
+        return render(request,'articles/form.html',context)
     else:
-        article_form = ArticleForm(instance=article)
-    context = {
-        'article_form' : article_form
-    }
-    return render(request,'articles/form.html',context)
+        return HttpResponseForbidden
 
+@login_required
 @require_POST
 def comment_create(request,article_pk):
     article = get_object_or_404(Article, pk=article_pk)
@@ -105,6 +121,7 @@ def comment_create(request,article_pk):
         comment = comment_form.save(commit=False)
         # 3-2. FK 넣고 저장
         comment.article = article
+        comment.user = request.user
         comment.save()
         messages.success(request, '댓글이 생성되었습니다.')
     # 4. return redirect
@@ -112,8 +129,12 @@ def comment_create(request,article_pk):
         messages.success(request, '댓글 형식이 맞지 않습니다.')
     return redirect('articles:detail', article_pk)
 
+@require_POST
 def comment_delete(request,article_pk,comment_pk):
     comment = Comment.objects.get(pk=comment_pk)
-    comment.delete()
-    messages.success(request, '댓글이 삭제되었습니다.')
-    return redirect('articles:detail',article_pk)
+    if comment.user == request.user:
+        comment.delete()
+        messages.success(request, '댓글이 삭제되었습니다.')
+    else:
+        messages.warning(request, '남의댓글을 삭제할수 없습니다.')
+    return HttpResponseForbidden

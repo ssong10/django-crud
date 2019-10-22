@@ -1,6 +1,8 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 from imagekit.models import ProcessedImageField,ImageSpecField
 from imagekit.processors import ResizeToFill
+from django.conf import settings
 
 # Create your models here.
 # 1. 모델(스키마) 정의
@@ -27,6 +29,8 @@ class Article(models.Model):
     #   auto_now :  수정시마다 자동으로 저장
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # settings.AUTH_USER_MODER : 'accounts.User' (str)
 
     def __str__(self):
         return f'{self.id} - {self.title}'
@@ -47,6 +51,7 @@ class Student(models.Model):
 
 
 class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)

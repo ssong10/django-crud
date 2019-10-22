@@ -23,7 +23,7 @@ class ArticleForm(forms.ModelForm):
     )
     class Meta:
         model = Article
-        fields = '__all__'
+        exclude = ('user',)
         # 위젯 설정 2
         # widgets = {
         #     'title' : forms.TextInput(
@@ -62,4 +62,4 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         # fields = ['content']
-        exclude = ('article', )
+        exclude = ('article', 'user',)

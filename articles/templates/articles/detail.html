@@ -11,23 +11,29 @@
 {% endif %}
 
 <h1> {{article.id}}번글 </h1>
-<h1> {{ article.title }} </h1>
-<h2> {{ article.content}} </h2>
-<h3> {{ article.created_at}} </h3>
+<h2>작성자 : {{article.user}} </h2>
+<h1>제목 :  {{ article.title }} </h1>
+<hr>
+<h2>내용 : {{ article.content}} </h2>
+<hr>
+<h5> 작성시간 : {{ article.created_at}} </h5>
 {% if article.image %}
   <img src="{{ article.image.url }}" alt="{{ article.image.name }}">
 {% endif %}
 <a href="{% url 'articles:index' %}">목록으로</a>
+{% if comment.user == user %}
 <form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
   {% csrf_token %}
   <input type="submit" value="삭제">
 </form>
 <a href="{% url 'articles:update' article.pk %}">[수정]</a>
+{% endif %}
 <hr>
 <h4>댓글 수: {{comments.count}} </h4>
 <table class="table">
   <thead>
     <tr>
+      <th scope="col">이름</th>
       <th scope="col">번호</th>
       <th scope="col">댓글</th>
       <th scope="col">작성시간</th>
@@ -39,6 +45,9 @@
     {% for comment in comments %}
     <tr>
       <td>
+        {{comment.user }}
+      </td>
+      <td>
         {{ comment.id }}
       </td>
       <td>
@@ -48,10 +57,12 @@
         {{ comment.created_at }}
       </td>
       <td>
+        {% if comment.user == user %}
         <form action="{% url 'articles:comment_delete' article.pk comment.id %}" method="POST"
           onclick="return confirm('진짜 지울래?')">
           {% csrf_token %}
           <input type="submit" value="삭제">
+        {% endif %}
         </form>
       </td>
     </tr>

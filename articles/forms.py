@@ -23,7 +23,7 @@ class ArticleForm(forms.ModelForm):
     )
     class Meta:
         model = Article
-        exclude = ('user',)
+        fields = ('title','content','image',)
         # 위젯 설정 2
         # widgets = {
         #     'title' : forms.TextInput(

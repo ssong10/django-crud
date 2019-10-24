@@ -1,0 +1,63 @@
+{% extends "articles/base.html" %}
+
+{% block body %}
+
+<div class="container mt-3">
+{% load gravatar %}
+<img src="{{ profile.email|makehash }}/" alt="avatar">
+
+<h3>{{ profile }} 님의 프로필 </h3>
+<hr>
+<h5>팔로워</h5>
+{{ profile.followers.count }}
+<br>
+{% for follower in profile.followers.all %}
+<a href="{% url 'accounts:profile' follower.pk %}">
+{{ follower.last_name}}
+{{ follower.first_name }}
+</a>
+<br>
+{% endfor %}
+<hr>
+<h5>팔로잉</h5>
+{{ profile.followings.count}}
+<br>
+{% for following in profile.followings.all %}
+<a href="{% url 'accounts:profile' following.pk %}">
+{{ following.last_name}}
+{{ following.first_name }}
+</a>
+<br>
+{% endfor %}
+<hr>
+{% if user != profile %}
+    {% if user in profile.followings.all %}
+    <a href="{% url 'accounts:follow' profile.pk %}"><div class="btn btn-secondary">unfollow</div></a>
+    {% else %}
+    <a href="{% url 'accounts:follow' profile.pk %}"><div class="btn btn-outline-secondary">follow</div></a>
+    {% endif %}
+{% endif %}
+{% if profile == user or user in profile.followers.all and profile in user.followers.all %}
+<h3>내가 쓴 글 ({{profile.article_set.count}})</h3>
+{% for article in profile.article_set.all %}
+<a href="{% url 'articles:detail' article.pk %}">{{ article.title }}</a>
+<hr>
+{% endfor %}
+<hr>
+<h3>내가 좋아요 한글 ({{profile.like_articles.count}})</h3>
+{% for article in profile.like_articles.all %}
+<a href="{% url 'articles:detail' article.pk %}">{{ article.title }}</a>
+<hr>
+{% endfor %}
+<hr>
+<h3>내 댓글</h3>
+{% for comment in profile.comment_set.all %}
+<a href="{% url 'articles:detail' comment.article.pk %}">{{comment.article.title}}</a> - {{ comment.content }}
+<hr>
+{% endfor %}
+{% else %}
+<p>맞팔 해야 보입니다</p>
+{% endif %}
+</div>
+
+{% endblock %}

@@ -9,27 +9,49 @@
   {% endfor %}
 </div>
 {% endif %}
+<div class="container mt-3">
+<h4> {{article.id}}번글 </h4>
 
-<h1> {{article.id}}번글 </h1>
-<h2>작성자 : {{article.user}} </h2>
-<h1>제목 :  {{ article.title }} </h1>
-<hr>
-<h2>내용 : {{ article.content}} </h2>
-<hr>
-<h5> 작성시간 : {{ article.created_at}} </h5>
+<div>
+<h2 class="text-center"> {{ article.title }} </h2>
+</div>
+<div class="inline-box " style='height:500px'>
+<div class="d-flex align-items-center" style='min-height:200px'>
 {% if article.image %}
   <img src="{{ article.image.url }}" alt="{{ article.image.name }}">
 {% endif %}
-<a href="{% url 'articles:index' %}">목록으로</a>
-{% if comment.user == user %}
-<form action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
-  {% csrf_token %}
-  <input type="submit" value="삭제">
-</form>
-<a href="{% url 'articles:update' article.pk %}">[수정]</a>
+{% load hashtag %}
+<h5> {{ article|make_link|safe|linebreaksbr }} </h5>
+</div>
+<div>
+<h6 class="text-right">작성자 : {{article.user}} </h6>
+<h6 class="text-right"> 작성시간 : {{ article.created_at}} </h6>
+</div>
+
+<div class="container d-flex">
+<div class="mr-auto">
+<h6 class="inline-box"> 좋아요 : {{ article.like_users.count }}개</h6>
+{% if user in article.like_users.all %}
+<a href="{% url 'articles:like' article.pk %}"><i class="fas fa-thumbs-up fa-2x "></i>
+</a>
+{% else %}
+<a href="{% url 'articles:like' article.pk %}"><i class="far fa-thumbs-up fa-2x " ></i>
 {% endif %}
+</div>
+
+<div class="mt-auto">
+<a class="d-inline btn btn-outline-secondary btn-sm" href="{% url 'articles:index' %}">목록으로</a>
+{% if article.user == user %}
+<a class="d-inline btn btn-outline-secondary btn-sm" href="{% url 'articles:update' article.pk %}">수정</a>
+<form class="d-inline" action="{% url 'articles:delete' article.pk %}" method="POST" onclick="return confirm('진짜 지울래?')">
+  {% csrf_token %}
+  <input class="btn btn-outline-secondary btn-sm" type="submit" value="삭제">
+</form>
+{% endif %}
+</div>
+</div>
 <hr>
-<h4>댓글 수: {{comments.count}} </h4>
+<h5>댓글 수: {{comments.count}} </h4>
 <table class="table">
   <thead>
     <tr>
@@ -37,7 +59,7 @@
       <th scope="col">번호</th>
       <th scope="col">댓글</th>
       <th scope="col">작성시간</th>
-      <th scope="col">삭제</th>
+      <th scope="col"></th>
 
     </tr>
   </thead>
@@ -61,7 +83,7 @@
         <form action="{% url 'articles:comment_delete' article.pk comment.id %}" method="POST"
           onclick="return confirm('진짜 지울래?')">
           {% csrf_token %}
-          <input type="submit" value="삭제">
+          <input class="btn btn-outline-danger btn-sm" type="submit" value="삭제">
         {% endif %}
         </form>
       </td>

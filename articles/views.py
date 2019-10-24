@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from IPython import embed
-from .models import Article, Comment
+from .models import Article, Comment, HashTag
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 # from accounts.models import User
@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .forms import ArticleForm, CommentForm
 from IPython import embed
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
@@ -36,8 +36,12 @@ def create(request):
                 # article = Article(title=title, content=content)
                 article = article_form.save(commit=False)
                 article.user = request.user
+                # 해시태그 저장 및 연결 작업
                 article.save()
-                # redirect
+                for word in article.content.split():
+                    if word[0] == '#':
+                        hashtag,created = HashTag.objects.get_or_create(content=word[1:])
+                        article.hashtags.add(hashtag)
                 return redirect('articles:detail', article.pk)
             # else :
                 # 다시 폼으로 돌아가 --> 중복되서 제거 !
@@ -98,6 +102,11 @@ def update(request,article_pk):
             article_form = ArticleForm(request.POST, instance=article)
             if article_form.is_valid():
                 article = article_form.save()
+                article.hashtags.clear()
+                for word in article.content.split():
+                    if word[0] == '#':
+                        hashtag,created = HashTag.objects.get_or_create(content=word[1:])
+                        article.hashtags.add(hashtag)
                 return redirect('articles:detail',article_pk)
         else:
             article_form = ArticleForm(instance=article)
@@ -111,23 +120,26 @@ def update(request,article_pk):
 @login_required
 @require_POST
 def comment_create(request,article_pk):
-    article = get_object_or_404(Article, pk=article_pk)
-    # 1. modelform에 사용자 입력값 넣고
-    comment_form = CommentForm(request.POST)
-    # 2. 검증하고,
-    if comment_form.is_valid():
-    # 3. 맞으면 저장.
-        # 3.1. 사용자 입력값으로 comment instance 생성 (저장은 x)
-        comment = comment_form.save(commit=False)
-        # 3-2. FK 넣고 저장
-        comment.article = article
-        comment.user = request.user
-        comment.save()
-        messages.success(request, '댓글이 생성되었습니다.')
-    # 4. return redirect
+    if request.user.is_authenticated:
+        article = get_object_or_404(Article, pk=article_pk)
+        # 1. modelform에 사용자 입력값 넣고
+        comment_form = CommentForm(request.POST)
+        # 2. 검증하고,
+        if comment_form.is_valid():
+        # 3. 맞으면 저장.
+            # 3.1. 사용자 입력값으로 comment instance 생성 (저장은 x)
+            comment = comment_form.save(commit=False)
+            # 3-2. FK 넣고 저장
+            comment.article = article
+            comment.user = request.user
+            comment.save()
+            messages.success(request, '댓글이 생성되었습니다.')
+        # 4. return redirect
+        else:
+            messages.success(request, '댓글 형식이 맞지 않습니다.')
+        return redirect('articles:detail', article_pk)
     else:
-        messages.success(request, '댓글 형식이 맞지 않습니다.')
-    return redirect('articles:detail', article_pk)
+        return HttpResponse('Unauthorized',status=401)
 
 @require_POST
 def comment_delete(request,article_pk,comment_pk):
@@ -135,6 +147,24 @@ def comment_delete(request,article_pk,comment_pk):
     if comment.user == request.user:
         comment.delete()
         messages.success(request, '댓글이 삭제되었습니다.')
+        return redirect('articles:detail',article_pk)
     else:
         messages.warning(request, '남의댓글을 삭제할수 없습니다.')
     return HttpResponseForbidden
+
+@login_required
+def like(request, article_pk):
+    article = get_object_or_404(Article,pk=article_pk)
+    user = request.user
+    if user not in article.like_users.all():
+        article.like_users.add(user)
+    else:
+        article.like_users.remove(user)
+    return redirect('articles:detail',article_pk)
+
+def hashtag(request, tag):
+    hashtag = get_object_or_404(HashTag,content=tag)
+    context = {
+        'hashtag': hashtag
+    }
+    return render(request,'articles/hashtag.html',context)

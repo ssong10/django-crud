@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .forms import ArticleForm, CommentForm
 from IPython import embed
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 # Create your views here.
 def index(request):
@@ -73,7 +73,6 @@ def detail(request,article_pk):
 
 @require_POST
 def delete(request,article_pk):
-
     article = Article.objects.get(pk=article_pk)
     if article.user == request.user:
     # if request.method == 'POST':
@@ -156,11 +155,14 @@ def comment_delete(request,article_pk,comment_pk):
 def like(request, article_pk):
     article = get_object_or_404(Article,pk=article_pk)
     user = request.user
+    is_liked = True
     if user not in article.like_users.all():
         article.like_users.add(user)
+        is_liked = True
     else:
         article.like_users.remove(user)
-    return redirect('articles:detail',article_pk)
+        is_liked = False
+    return JsonResponse({'is_liked':is_liked,'like_count':article.like_users.count()})
 
 def hashtag(request, tag):
     hashtag = get_object_or_404(HashTag,content=tag)

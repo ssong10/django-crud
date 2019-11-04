@@ -30,12 +30,11 @@
 
 <div class="container d-flex">
 <div class="mr-auto">
-<h6 class="inline-box"> 좋아요 : {{ article.like_users.count }}개</h6>
+<h6 class="inline-box"><span id="like-count">{{ article.like_users.count }}</span>명이 이 글을 좋아합니다.</h6>
 {% if user in article.like_users.all %}
-<a href="{% url 'articles:like' article.pk %}"><i class="fas fa-thumbs-up fa-2x "></i>
-</a>
+<i id='like-button'  data-id = "{{article.id}}" class="fas fa-thumbs-up fa-2x "></i>
 {% else %}
-<a href="{% url 'articles:like' article.pk %}"><i class="far fa-thumbs-up fa-2x " ></i>
+<i id='like-button' data-id = "{{article.id}}" class="far fa-thumbs-up fa-2x " ></i>
 {% endif %}
 </div>
 
@@ -104,4 +103,24 @@
     <button type="submit" class="btn btn-primary">댓글</button>
   {% endbuttons %}
 </form>
+{% endblock %}
+
+{% block script %}
+<script>
+  const likeButton = document.querySelector('#like-button')
+  likeButton.addEventListener('click', function(event){
+    axios.get(`/articles/${event.target.dataset.id}/like/`)
+      .then(response => {
+        let likeCount = document.querySelector('#like-count')
+        if (response.data.is_liked) {
+          event.target.classList.remove('far')
+          event.target.classList.add('fas')
+        } else {
+          event.target.classList.add('far')
+          event.target.classList.remove('fas')
+        }
+        likeCount.innerText = response.data.like_count
+      })
+  })
+</script>
 {% endblock %}
